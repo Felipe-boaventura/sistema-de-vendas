@@ -9,7 +9,6 @@ import io.github.felipeboaventura.domain.entity.Pedido;
 import io.github.felipeboaventura.domain.enun.StatusPedido;
 import io.github.felipeboaventura.service.PedidoService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -33,13 +32,13 @@ public class PedidoController {
 
     @PostMapping
     @ResponseStatus(ACCEPTED)
-    public Integer save (@RequestBody @Valid PedidoDTO dto){
+    public Integer save(@RequestBody @Valid PedidoDTO dto) {
         Pedido pedido = service.salvar(dto);
         return pedido.getId();
     }
 
     @GetMapping("{id}")
-    public InformacoesPedidosDTO getById (@PathVariable  Integer id){
+    public InformacoesPedidosDTO getById(@PathVariable Integer id) {
         return service
                 .obterPedidoCompleto(id)
                 .map(p -> converter(p))
@@ -49,7 +48,7 @@ public class PedidoController {
     @PatchMapping("{id}")
     @ResponseStatus(NO_CONTENT)
     public void updateStatus(@RequestBody @Valid AtualizacaoStatusPedidoDTO dto,
-                             @PathVariable Integer id){
+                             @PathVariable Integer id) {
         String novoStatus = dto.getNovoStatus();
         service.atualizarStatus(id, StatusPedido.valueOf(novoStatus));
     }
@@ -68,7 +67,7 @@ public class PedidoController {
     }
 
     private List<InformacoesItensPedidosDTO> converter(List<ItemPedido> itens) {
-        if(CollectionUtils.isEmpty(itens)){
+        if (CollectionUtils.isEmpty(itens)) {
             return Collections.emptyList();
         }
 

@@ -3,17 +3,13 @@ package io.github.felipeboaventura.security.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-import io.github.felipeboaventura.VendasApplication;
 import io.github.felipeboaventura.domain.entity.Usuario;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
 
 @Service
 public class JwtService {
@@ -25,19 +21,17 @@ public class JwtService {
     private String chaveAssinatura;
 
     public String gerarToken(Usuario user) {
-        Algorithm algorithm = Algorithm.HMAC256(chaveAssinatura);
-        long expString = Long.valueOf(expiracao);
-        LocalDateTime dataHoraExpiracao = LocalDateTime.now().plusMinutes(expString);
-        Instant instant = dataHoraExpiracao.atZone(ZoneId.systemDefault()).toInstant();
-        Date date = Date.from(instant);
-
-
-           String token = JWT
-                   .create().withIssuer("auth-api")
-                   .withSubject(user.getLogin())
-                   .withExpiresAt(date)
-                   .sign(algorithm);
-           return token;
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(chaveAssinatura);
+            String token = JWT.create()
+                    .withIssuer("auth-api")
+                    .withSubject(user.getLogin())
+                    .withExpiresAt(expiration())
+                    .sign(algorithm);
+            return token;
+        } catch (JWTCreationException e) {
+            throw new RuntimeException("Erro na geração de token" + e);
+        }
     }
 
     public String validacao(String token) {
@@ -48,18 +42,13 @@ public class JwtService {
                     .build()
                     .verify(token)
                     .getSubject();
-
         } catch (JWTCreationException e) {
-            throw new RuntimeException("Erro", e);
+            throw new RuntimeException("Token inválido ou expirado: " + e.getMessage(), e);
         }
     }
 
-//    public static void main(String[] args) {
-//        ConfigurableApplicationContext contexto = SpringApplication.run(VendasApplication.class);
-//        JwtService service = contexto.getBean(JwtService.class);
-//        Usuario usuario = Usuario.builder().login("Felipe").build();
-//        String token = service.gerarToken(usuario);
-//        System.out.println("token AAAAAAAAAAAAAAAQQQQQQQQQQQQQQQUUUUUUUUUUUUUUUUIIIIIIIIIIII" + token);
-//    }
+    private Instant expiration() {
+        return LocalDateTime.now().plusMinutes(30).atZone(ZoneId.systemDefault()).toInstant();
+    }
 }
 

@@ -2,7 +2,9 @@ package io.github.felipeboaventura.domain.entity;
 
 import io.github.felipeboaventura.domain.enun.StatusPedido;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

@@ -6,7 +6,7 @@ import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.List;
 
-public class NotEmptyValidator  implements ConstraintValidator<NotEmptyList, List> {
+public class NotEmptyValidator implements ConstraintValidator<NotEmptyList, List> {
     @Override
     public void initialize(NotEmptyList constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
