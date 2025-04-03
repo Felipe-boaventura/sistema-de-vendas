@@ -6,6 +6,7 @@ import io.github.felipeboaventura.REST.dto.UsuarioDTO;
 import io.github.felipeboaventura.domain.entity.Usuario;
 import io.github.felipeboaventura.domain.repository.UsuarioRepository;
 import io.github.felipeboaventura.security.jwt.JwtService;
+import io.github.felipeboaventura.service.EmailService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ public class UsuarioController {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private EmailService emailService;
 
     @PostMapping("/registrar")
     @ResponseStatus(HttpStatus.CREATED)
@@ -42,7 +45,8 @@ public class UsuarioController {
 
         this.repository.save(newUser);
 
-        return ResponseEntity.ok(newUser);
+        return emailService()
+        //return ResponseEntity.ok(newUser);
     }
 
     @PostMapping("/login")
